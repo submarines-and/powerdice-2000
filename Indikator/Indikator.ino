@@ -66,4 +66,3 @@ void writeSR(int value){
   }
   digitalWrite(latchPin, HIGH);
 }
-
