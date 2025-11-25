@@ -20,6 +20,18 @@ void setup() {
   pinMode(buttonPin, INPUT);
   pinMode(biasPin, INPUT);
   delay(1);
+  
+  startupRoutine();
+}
+
+void startupRoutine(){
+  for (int i = 0; i < 8; i++){
+    writeSR(i);
+    delay(10);
+  }
+  
+  delay(1000);
+  writeSR(0);
 }
 
 void loop() {
@@ -31,15 +43,12 @@ void loop() {
  
  while (digitalRead(buttonPin) == HIGH){
    writeSR(0);
-   value = random(1000,6000);
-   value += bias();
-   value /= 1000;
+   value = (random(1000,6000) + bias()) / 1000;
    delay(1);
  }
  
  writeSR(value);
  delay(1);
-
 }
 
 int bias(){
