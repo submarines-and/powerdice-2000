@@ -9,8 +9,6 @@ int dataPin = 11;
 int buttonPin = 7;
 int biasPin = 6;
 
-int v [] = {0, 1, 1, 0, 0, 1, 1, 0};
-
 
 void setup() {
   pinMode(latchPin, OUTPUT);
