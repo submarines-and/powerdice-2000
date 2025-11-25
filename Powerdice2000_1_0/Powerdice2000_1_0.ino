@@ -3,46 +3,39 @@ int clockPin = 3;
 int latchPin = 4;
 int speakerPin = 5;
 int errorLedPin = 6;
-
-int casinoTogglePin = 7;  //HIGH = knapp av
+int casinoTogglePin = 7;
 int slowTogglePin = 8;
 int multipleTogglePin = 9;
 int rollButton = 10;
-
-int cheatTogglePin = 11; //HIGH = knapp av
-
+int cheatTogglePin = 11;
 int cheatPotPin = A0;
 int casinoPotPin = A1;
-int slowPotPin = A1;
-int multiplePotPin = A1;
+int slowPotPin = A2;
+int multiplePotPin = A3;
 
 
 void setup() {
-
 
   pinMode(dataPin, OUTPUT);
   pinMode(clockPin, OUTPUT);
   pinMode(latchPin, OUTPUT);
   pinMode(errorLedPin, OUTPUT);
-
   pinMode(speakerPin, OUTPUT);
-
   pinMode(casinoTogglePin, INPUT);
   pinMode(slowTogglePin, INPUT);
   pinMode(multipleTogglePin, INPUT);
   pinMode(rollButton, INPUT);
-
+  pinMode(cheatTogglePin, INPUT);
   digitalWrite(casinoTogglePin, HIGH);
   digitalWrite(slowTogglePin, HIGH);
   digitalWrite(multipleTogglePin, HIGH);
   digitalWrite(rollButton, HIGH);
 
-  pinMode(cheatTogglePin, INPUT);
-
   writeSR(0,false);
   delay(500);
   for(int i = 1; i <= 10; i++) {
     soundSpeaker(i,20);
+    writeSR(i,false);
   }
 
 }
@@ -63,7 +56,6 @@ void loop() {
     }
   }
   counter == 0;
-
 
   while(digitalRead(rollButton) == LOW) {
 
@@ -111,12 +103,12 @@ void slowRoll(){
     delay(1);
   }
 
-  int t = (readPot(slowPotPin)/100)+2;
-  int v[5];
+  int t = (readPot(slowPotPin)/100)+4;
+  int v[6];
 
   for (int i = 0; i < t*2; i++){
-    for (int i = 1; i <= 5; i++){
-      v[i] = random(0,2);
+    for (int j = 0; j < 6; j++){
+      v[j] = random(0,2);
     }
     writeSR(v);
     soundSpeaker(10,1);
@@ -126,9 +118,9 @@ void slowRoll(){
   for (int i = 0; i < 3; i++){
     writeSR(6, false);
     soundSpeaker(5,20);
-    delay(200);
+    delay(167);
     writeSR(0, false);
-    delay(200);
+    delay(167);
   }
   writeSR(rollDice(), true);
 }
@@ -191,17 +183,12 @@ void generateResults(int amount, int value){
 }
 
 void showResults(int v){
-  int prel[6];
   int results[6];
 
-  for (int i = 0; i<6; i++){
+  for (int i = 5; i>=0; i--){
     int rest = v%2;
-    prel[i] = rest;
+    results[i] = rest;
     v = v/2;
-  }
-
-  for (int i = 0; i < 6; i++){
-    results[5-i] = prel[i];
   }
 
   writeSR(results);
@@ -256,14 +243,14 @@ int rollDice(){
 }
 
 int bias(){
-  int b = analogRead(cheatPotPin) - 512;
+  int b = readPot(cheatPotPin) - 512;
   return b * 4;
 }
 
 
 
 int readPot(int p){
-  return analogRead(p);
+  return 1023 - analogRead(p);
 }
 
 
@@ -333,3 +320,4 @@ void soundSpeaker(int level, long time) {
     elapsedTime = elapsedTime + d;
   }
 }
+
